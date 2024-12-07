@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Scan Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron&display=swap" rel="stylesheet"> <!-- Cybersecurity and digital fonts -->
+    <style>
+        /* General body setup */
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); /* Matrix-style dark gradient */
+            font-family: 'Space Mono', monospace; /* Monospaced font for a terminal look */
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main container setup */
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px); /* Slight blur effect for a cool, techy look */
+            width: 80%;
+            max-width: 500px;
+        }
+
+        /* Header styling with blinking effect */
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 3em;
+            animation: blink 1s infinite; /* Blink effect */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 255, 0, 0.7);
+            margin-bottom: 30px;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Notification box styling */
+        .notification {
+            background-color: #e74c3c; /* Red alert */
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+        }
+
+        .notification.hidden {
+            display: none;
+        }
+
+        /* Styled link (button) for log download */
+        a {
+            display: inline-block;
+            background-color: #00b894;
+            color: white;
+            padding: 15px 25px;
+            font-size: 1.3em;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+
+        a:hover {
+            background-color: #00b4a0;
+            transform: scale(1.05); /* Slight scale effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Add a subtle glowing effect to the notification */
+        .notification.glow {
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px #ff3333, 0 0 10px #ff3333, 0 0 15px #ff3333, 0 0 20px #e74c3c;
+            }
+            100% {
+                text-shadow: 0 0 10px #ff3333, 0 0 15px #ff3333, 0 0 20px #ff3333, 0 0 30px #e74c3c;
+            }
+        }
+
+        /* Clock styling with digital timer font */
+        .clock {
+            font-family: 'Orbitron', sans-serif; /* Digital timer font */
+            font-size: 2em;
+            margin-top: 20px;
+            color: #00ff00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+        }
+
+        /* Background particle effect (optional) */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://cdn.pixabay.com/photo/2018/09/20/19/22/abstract-3680489_960_720.jpg') no-repeat center center;
+            background-size: cover;
+            filter: blur(10px);
+            z-index: -1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="particles"></div> <!-- Optional background particle effect -->
+    <div class="container">
+        <h1>IDS IS RUNNING!</h1>
+        <div class="notification hidden" id="alert">Scan detected!</div>
+        <a href="/download-log">Download Log File</a>
+        <div class="clock" id="clock"></div> <!-- Clock element -->
+    </div>
+
+    <!-- Include the Socket.IO Client library -->
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+
+    <script>
+        // Initialize the SocketIO connection
+        const socket = io.connect("http://localhost:5000");  // Adjust port if needed
+
+        // Listen for scan_alert events from the server
+        socket.on('scan_alert', function(data) {
+            showAlert(data.message); // Show the alert with the scan message
+        });
+
+        // Function to show alert notification
+        function showAlert(message) {
+            const alert = document.getElementById("alert");
+            alert.textContent = message;
+            alert.classList.remove("hidden");
+            alert.classList.add("glow");
+            setTimeout(() => alert.classList.add("hidden"), 3000); // Hide after 3 seconds
+        }
+
+        // Function to update and display the current time (clock)
+        function updateClock() {
+            const clockElement = document.getElementById("clock");
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Update clock every second
+        setInterval(updateClock, 1000);
+
+        // Initialize the clock immediately
+        updateClock();
+    </script>
+</body>
+</html>
