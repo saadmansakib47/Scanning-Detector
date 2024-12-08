@@ -133,24 +133,21 @@
     <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
 
     <script>
-        // Initialize the SocketIO connection
-        const socket = io.connect("http://localhost:5000");  // Adjust port if needed
 
-        // Listen for scan_alert events from the server
+        const socket = io.connect("http://localhost:5000");
+
         socket.on('scan_alert', function(data) {
-            showAlert(data.message); // Show the alert with the scan message
+            showAlert(data.message);
         });
 
-        // Function to show alert notification
         function showAlert(message) {
             const alert = document.getElementById("alert");
             alert.textContent = message;
             alert.classList.remove("hidden");
             alert.classList.add("glow");
-            setTimeout(() => alert.classList.add("hidden"), 3000); // Hide after 3 seconds
+            setTimeout(() => alert.classList.add("hidden"), 3000);
         }
 
-        // Function to update and display the current time (clock)
         function updateClock() {
             const clockElement = document.getElementById("clock");
             const now = new Date();
@@ -160,10 +157,8 @@
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        // Update clock every second
         setInterval(updateClock, 1000);
 
-        // Initialize the clock immediately
         updateClock();
     </script>
 </body>
